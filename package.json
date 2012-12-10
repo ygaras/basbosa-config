@@ -1,7 +1,7 @@
 {
-  "name": "basbosa-cofig",
+  "name": "basbosa-config",
   "version": "0.0.1",
-  "description": "A configuration management class that is part of Basbosa framework",
+  "description": "A JS configuration management class that is part of Basbosa framework",
   "author": {
     "name": "Youssef Garas",
     "email": "ynnaguib@gmail.com"
