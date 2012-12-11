@@ -4,6 +4,9 @@
   "description": "A JS configuration management class that is part of Basbosa framework",
   "author": {
     "name": "Youssef Garas",
-    "email": "ynnaguib@gmail.com"
+    "email": "ygaras@hub43.com"
+  },
+  "dependencies": {
+	"requirejs": "2.0.4"
   }
 }

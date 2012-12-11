@@ -1,0 +1,17 @@
+<html>
+	<head>
+		<script>
+			var Config = {
+				bar : 'Not Foo!'
+			};
+		</script>
+		 <script src="index.js" type="text/javascript"></script>
+		<script>
+			alert('Original value for bar: ' + Config.get('bar'));
+			Config.set('bar', 'Is Foo');
+			alert('New value for bar: ' + Config.get('bar'));
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
