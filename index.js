@@ -47,6 +47,10 @@
     write : function(index, value) {
       this.__config[index] = value;
       return this;
+    },
+    
+    setConfig : function(config) {
+      this.__config = config;
     }
   };
 
