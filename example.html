@@ -1,15 +1,22 @@
 <html>
 	<head>
 		<script>
-			var Config = {
-				bar : 'Not Foo!'
+			var appConfig = {
+				bar : 'bar!',
+				deepBar : {
+					foo : 'nested foo'
+				}
 			};
 		</script>
 		 <script src="index.js" type="text/javascript"></script>
 		<script>
-			alert('Original value for bar: ' + Config.get('bar'));
-			Config.set('bar', 'Is Foo');
-			alert('New value for bar: ' + Config.get('bar'));
+			var t = new BasbosaConfig(appConfig);
+			//alert('Original value for bar: ' + t.get('bar'));
+			//alert('Original value for bar: ' + t.get('deepBar.foo'));
+			t.set('deepBar.foo', 'nested update using set');
+			
+			alert(t.get('deepBar.foo'));
+			//alert('New value for bar: ' + t.get('bar'));
 		</script>
 	</head>
 	<body>

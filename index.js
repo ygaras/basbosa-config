@@ -9,55 +9,146 @@
     });
   } else {
     // Browser globals
-    root.Config = factory(root);
+    root.BasbosaConfig = factory(root);
   }
 }(this, function(root) {
-  var config, defaults, loaders;
-  
-  defaults = {
-    socketUrl : '/'
-  };
-  
-  loaders = ['BasbosaConfig', 'Config', 'jRaw'];
-  
-  for ( var key in loaders) {
-    if (typeof root[loaders[key]] !== 'undefined') {
-      config = root[loaders[key]];
-    }
-  }
-  
-  config = config || {};
+ 
+  var Config = function(appConfig) {
+    var config, defaults, loaders;
+    // build in default, TODO: remove this hack!
     
-  for ( var key in defaults) {
-    config[key] = typeof (config[key]) === 'undefined' ? defaults[key] : config[key];
-  }
-
-  var Config = {
-    __config : config,
+    defaults = {
+      socketUrl : '/'
+    };
+      
+    // variables in the root object  to load from
+    loaders = ['BasbosaConfig', 'Config', 'jRaw'];
     
-    read : function(index) {
-      if (typeof this.__config[index] !== 'undefined') {
-        return this.__config[index];
-      } else {
-        //Logger.warn('The value ' + index + ' is not defined in Config yet');
-        return 'undefined';
+    for ( var key in loaders) {
+      if (typeof root[loaders[key]] !== 'undefined') {
+        config = root[loaders[key]];
       }
-    },
-    
-    write : function(index, value) {
-      this.__config[index] = value;
-      return this;
-    },
-    
-    setConfig : function(config) {
-      this.__config = config;
     }
+    
+    config = config || {};
+   
+    this.config = {};
+    this.extend(true, this.config, defaults, config, appConfig);
   };
+   
+  Config.prototype = {
+      
+    get : function(index) {
+      return this.dotToObj(this.config, index);
+    },
+    
+    set : function(index, value) {
+      var target = this.dotToObj(this.config, index);
+      
+      // handle overwriting scaler values
+      if (typeof target !== 'object' && !Array.isArray(target)) {
+        var newIndex = index.split('.')
+          lastIndex = newIndex.splice(-1, 1);
+        
+        newIndex =  newIndex.join('.');
+        debugger;
+        this.dotToObj(this.config, newIndex)[lastIndex] = value;
+        return;
+      }
+      return this.extend(true, target, value);
+    },
+    
+    setConfig : function(config, reset) {
+      this.config = config;
+    },
+    
+    /**
+     * jQuery extend  
+     */
+    extend : function() {
+      var options, name, src, copy, copyIsArray, clone,
+        target = arguments[0] || {},
+        i = 1,
+        length = arguments.length,
+        deep = false;
 
-  Config.get = Config.read;
-  Config.set = Config.write;
+      // Handle a deep copy situation
+      if (typeof target === 'boolean') {
+        deep = target;
+        target = arguments[1] || {};
+        // skip the boolean and the target
+        i = 2;
+      }
+
+      // Handle case when target is a string or something (possible in deep copy)
+      if ( typeof target !== 'object' && typeof target !== 'function') {
+        target = {};
+      }
+
+      // extend Config object itself if only one argument is passed
+      if ( length === i ) {
+        target = this.config;
+        --i;
+      }
+      
+      for ( ; i < length; i++ ) {
+        // Only deal with non-null/undefined values
+        if ((options = arguments[ i ]) != null) {
+          // Extend the base object
+          for (name in options) {
+            src = target[name];
+            copy = options[name];
+
+            // Prevent never-ending loop
+            if (target === copy) {
+              continue;
+            }
+
+            // Recurse if we're merging plain objects or arrays
+            if (deep && copy && (typeof copy === 'object' || (copyIsArray = (Array.isArray(copy))))) {
+              if ( copyIsArray ) {
+                copyIsArray = false;
+                clone = src && (Array.isArray(src)) ? src : [];
+
+              } else {
+                clone = src && (typeof src === 'object') ? src : {};
+              }
+
+              // Never move original objects, clone them
+              target[name] = this.extend(deep, clone, copy);
+
+            // Don't bring in undefined values
+            } else if (copy !== undefined) {
+              target[name] = copy;
+            }
+          }
+        }
+      }
+
+      // Return the modified object
+      return target;
+    },
+    
+    dotToObj : function(obj, string) {
+      var parts = string.split('.');
+      var newObj = obj[parts[0]];
+      if (parts[1]) {
+          parts.splice(0, 1);
+          var newString = parts.join('.');
+          return this.dotToObj(newObj, newString);
+      }
+      return newObj;
+    }
   
-  if (typeof Basbosa !== 'undefined')  Basbosa.add('Config', Config);
+  };
+  
+  if (typeof Basbosa !== 'undefined')  {
+    Basbosa.add('BasbosaConfig', Config);
+    Basbosa.add('Config', new Config);
+  }
+  
+  if (typeof root.BasbosaConfig !== 'undefined')  root.BasbosaConfig = new Config();
+  
   
   return Config;
 }));
