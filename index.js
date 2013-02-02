@@ -18,7 +18,8 @@
     // build in default, TODO: remove this hack!
     
     defaults = {
-      socketUrl : '/'
+      socketUrl : '/',
+      env : 'development'
     };
       
     // variables in the root object  to load from
@@ -33,25 +34,39 @@
     config = config || {};
    
     this.config = {};
+    
     this.extend(true, this.config, defaults, config, appConfig);
   };
    
   Config.prototype = {
-      
+    
+    env : function(env, index, settings) {
+      if (typeof index === 'object') {
+        settings = index;
+        index = '';
+      }
+      if (this.get('env') === env) return this.set(index, settings);
+    },
+    
     get : function(index) {
-      return this.dotToObj(this.config, index);
+      return this.dotToObj(this.config, index || '');
     },
     
     set : function(index, value) {
+      
+      if (typeof index === 'object') {
+        value = index;
+        index = '';
+        
+      }
+            
       var target = this.dotToObj(this.config, index);
       
       // handle overwriting scaler values
       if (typeof target !== 'object' && !Array.isArray(target)) {
         var newIndex = index.split('.')
-          lastIndex = newIndex.splice(-1, 1);
-        
+          lastIndex = newIndex.splice(-1, 1); 
         newIndex =  newIndex.join('.');
-        debugger;
         this.dotToObj(this.config, newIndex)[lastIndex] = value;
         return;
       }
@@ -131,6 +146,8 @@
     
     dotToObj : function(obj, string) {
       var parts = string.split('.');
+      
+      if (parts[0] === '') return obj;
       var newObj = obj[parts[0]];
       if (parts[1]) {
           parts.splice(0, 1);
