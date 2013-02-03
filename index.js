@@ -120,7 +120,7 @@
             }
 
             // Recurse if we're merging plain objects or arrays
-            if (deep && copy && (typeof copy === 'object' || (copyIsArray = (Array.isArray(copy))))) {
+            if (deep && copy && ((copyIsArray = Array.isArray(copy)) || typeof copy === 'object')) {
               if ( copyIsArray ) {
                 copyIsArray = false;
                 clone = src && (Array.isArray(src)) ? src : [];
