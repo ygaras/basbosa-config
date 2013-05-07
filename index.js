@@ -45,7 +45,7 @@
         settings = index;
         index = '';
       }
-      if (this.get('env') === env) return this.set(index, settings);
+      if (this.get('env').indexOf(env) > -1) return this.set(index, settings);
     },
     
     get : function(index) {
