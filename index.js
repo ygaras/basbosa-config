@@ -53,13 +53,13 @@
     },
     
     set : function(index, value) {
-      
+
       if (typeof index === 'object') {
         value = index;
         index = '';
         
       }
-            
+
       var target = this.dotToObj(this.config, index);
       
       // handle overwriting scaler values
@@ -78,14 +78,14 @@
     },
     
     /**
-     * jQuery extend  
+     * jQuery extend except that default is to deep copy
      */
     extend : function() {
       var options, name, src, copy, copyIsArray, clone,
         target = arguments[0] || {},
         i = 1,
         length = arguments.length,
-        deep = false;
+        deep = true;
 
       // Handle a deep copy situation
       if (typeof target === 'boolean') {
