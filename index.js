@@ -73,7 +73,7 @@
       // handle overwriting scaler values
       if (typeof target !== 'object' && !Array.isArray(target)) {
         var newIndex = index.split('.')
-          lastIndex = newIndex.splice(-1, 1); 
+        var lastIndex = newIndex.splice(-1, 1);
         newIndex =  newIndex.join('.');
         this.dotToObj(this.config, newIndex)[lastIndex] = value;
         return;
@@ -152,19 +152,45 @@
       return target;
     },
     
-    dotToObj : function(obj, string) {
+    dotToObj : function(obj, string, strict) {
       var parts = string.split('.');
-      
-      if (parts[0] === '') return obj;
-      var newObj = obj[parts[0]];
-      if (parts[1]) {
-          parts.splice(0, 1);
-          var newString = parts.join('.');
-          return this.dotToObj(newObj, newString);
+      var strict = typeof strict === 'undefined' ? true : strict;
+      var part0 = parts[0];
+      if (!isNaN(parseInt(part0))) part0 = parseInt(part0);
+
+      if (!strict && typeof obj === 'undefined') {
+        // check if we are trying to fill in an array or an object
+        obj = isNaN(parseInt(part0)) ? {} : [];
       }
-      return newObj;
+
+      if (part0 === '') return obj;
+
+      if (!strict && typeof obj[part0] === 'undefined') {
+        obj[part0] = isNaN(parseInt(parts[1])) ? {} : [];
+      }
+
+      if (parts[1]) {
+        parts.splice(0, 1);
+        return this.dotToObj(obj[part0], parts.join('.'), strict);
+      }
+      return obj[part0];
+    },
+
+    parseProperties : function(string) {
+      var lines = string.split("\n"), obj = {}, self = this;
+      lines.forEach(function(line) {
+        line  = line.split('=');
+        var key = line[0].trim(), val = line[1].trim();
+
+        //Since we are writing scalar values
+        var newIndex = key.split('.')
+        var lastIndex = newIndex.splice(-1, 1);
+        newIndex =  newIndex.join('.');
+        self.dotToObj(obj, newIndex, false)[lastIndex] = val;
+      });
+      return obj;
     }
-  
+
   };
 
 
