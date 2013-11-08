@@ -1,17 +1,25 @@
 (function(root, factory) {
   if (typeof exports !== 'undefined') {
     // Node.js
-    module.exports = factory(root);
+    var Basbosa;
+    try {
+      Basbosa = require('basbosa-registry');
+    } catch(e) {
+      // Its okay, we can live without the registry
+    } finally {
+      module.exports = factory(root, Basbosa);
+    }
+
   } else if (typeof define === 'function' && define.amd) {
     // AMD
-    define(function() {
-      return factory(root);
+    define(['basbosa'], function(Basbosa) {
+      return factory(root, Basbosa);
     });
   } else {
     // Browser globals
-    root.BasbosaConfig = factory(root);
+    root.BasbosaConfig = factory(root, Basbosa);
   }
-}(this, function(root) {
+}(this, function(root, Basbosa) {
  
   var Config = function(appConfig) {
     var config, defaults, loaders;
@@ -158,14 +166,13 @@
     }
   
   };
-  
+
+
   if (typeof Basbosa !== 'undefined')  {
-    Basbosa.add('BasbosaConfig', Config);
     Basbosa.add('Config', new Config);
   }
   
   if (typeof root.BasbosaConfig !== 'undefined')  root.BasbosaConfig = new Config();
-  
-  
+
   return Config;
 }));
