@@ -2,6 +2,10 @@
   "name": "basbosa-config",
   "version": "0.0.1",
   "description": "A JS configuration management class that is part of Basbosa framework",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ygaras/basbosa-config/tarball/master"
+  },
   "author": {
     "name": "Youssef Garas",
     "email": "ygaras@hub43.com"
