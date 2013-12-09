@@ -9,8 +9,5 @@
   "author": {
     "name": "Youssef Garas",
     "email": "ygaras@hub43.com"
-  },
-  "dependencies": {
-	"requirejs": "2.0.4"
   }
 }
