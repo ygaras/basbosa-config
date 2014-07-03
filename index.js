@@ -179,7 +179,9 @@
     parseProperties : function(string) {
       var lines = string.split("\n"), obj = {}, self = this;
       lines.forEach(function(line) {
+        if (!line.length) return;
         line  = line.split('=');
+        if (!line[0] || !line[1]) return;
         var key = line[0].trim(), val = line[1].trim();
 
         //Since we are writing scalar values
